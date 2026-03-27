@@ -31,3 +31,7 @@ npm-debug.log*
 skills-lock.json
 .cursor/
 .agents/
+
+# Python (skills with scripts)
+**/__pycache__/
+*.py[cod]

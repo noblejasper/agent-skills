@@ -45,6 +45,7 @@
 
 - 新規の「Git 系」機能は、既存スキルへの追記か、**責務が明確な新スキル**かの二択で設計する。
 - `create-pr-jp` は `.github/pull_request_template.md` または `docs/pull_request_template.md` を参照する（既存スキル定義）。
+- **`gh-pr-review-responder`** は **既に開いている PR** のレビューコメント・スレッドに対応する。コード変更があった場合の検証と push 前チェックは **push** と同様に **`pnpm lint && pnpm test`**（スクリプトがある場合）を原則とする。PR の新規作成・タイトル本文の編集は **create-pr-jp** の責務と分離する。
 
 ## Rollout / migration
 

@@ -8,21 +8,23 @@ AIコーディングエージェント向けスキルのコレクションです
 
 <!-- スキルを追加する際は、以下の形式で記述してください -->
 
-### hello-world
+### gh-pr-review-responder
 
-シンプルなスキルのサンプル実装です。新しいスキルを作成するためのテンプレートとして使用できます。
+GitHub の PR レビューコメントを **KEEP / DISCARD** で整理し、返信・必要なら修正まで行うスキルです。
 
 **使用するとき:**
 
-- スキルフォーマットを学習したいとき
-- 新しいスキルの出発点として
+- 開いている PR のレビュースレッドに対応するとき
+- `gh-pr-review-responder` や PR レビュー対応を依頼するとき
+
+その他のスキルはリポジトリの [`skills/`](skills/) ディレクトリを参照してください。
 
 ---
 
 ## インストール
 
 ```bash
-npx skills add https://github.com/noblejasper/agent-skills --skill hello-world
+npx skills add https://github.com/noblejasper/agent-skills --skill gh-pr-review-responder
 ```
 
 ## 使い方
@@ -32,7 +34,7 @@ npx skills add https://github.com/noblejasper/agent-skills --skill hello-world
 **例:**
 
 ```
-hello と言って
+この PR のレビューコメントに対応して
 ```
 
 ## スキルの構造

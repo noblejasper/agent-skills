@@ -29,9 +29,9 @@ There is no required `{skill-name}.zip` in-tree; zipping is optional if you need
 
 ### Naming Conventions
 
-- **Skill directory**: `kebab-case` (e.g., `hello-world`, `deploy-helper`)
+- **Skill directory**: `kebab-case` (e.g., `gh-pr-review-responder`, `deploy-helper`)
 - **SKILL.md**: Always uppercase, always this exact filename
-- **Scripts**: `kebab-case.sh` (e.g., `hello.sh`, `fetch-logs.sh`)
+- **Scripts**: `kebab-case.sh` (e.g., `fetch-logs.sh`, `deploy.sh`)
 
 ### SKILL.md Format
 

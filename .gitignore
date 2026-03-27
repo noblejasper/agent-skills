@@ -27,5 +27,7 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# cursor
+# agents
+skills-lock.json
 .cursor/
+.agents/

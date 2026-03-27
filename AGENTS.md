@@ -8,6 +8,8 @@ This repository is a collection of **Agent Skills** for AI coding assistants. Sk
 
 End users install skills from this repo (for example via `npx skills add` as documented in `README.md`). When editing here, keep `SKILL.md`, scripts, and `README.md` in sync.
 
+Formal architecture decisions for this repository are recorded as **ADRs** under [docs/adr/](docs/adr/index.md). **When investigating** those decisions, **drafting or updating ADRs**, or **turning design questions into ADRs**, prefer the **`adr-manager`** skill (`skills/adr-manager/SKILL.md`) so you follow repo conventions, gather evidence from the tree, and keep ADRs consistent—rather than only opening Markdown files ad hoc. For a quick list of decisions, see [docs/adr/index.md](docs/adr/index.md). Keep `AGENTS.md` for lightweight, day-to-day pointers; **details and rationale live in ADRs.**
+
 ## Creating a New Skill
 
 ### Directory Structure
@@ -84,5 +86,7 @@ If a skill needs network access to specific domains, tell users to allow those d
 
 ## Learned Workspace Facts
 
-- Write skill `SKILL.md` content in English for agent ergonomics; keep Japanese for commit messages and PR copy where a skill explicitly defines that (e.g. commit-jp, create-pr-jp).
-- Git workflow skills are narrowly scoped: the `push` skill does not create or update PRs—use `create-pr-jp` for that; use `pull` to sync with the remote base branch; before pushing, run `pnpm lint && pnpm test` when those scripts exist (otherwise follow project conventions or `AGENTS.md`).
+Short reminders only—**full rationale, options considered, and consequences** are in the linked ADRs (use **`adr-manager`** when you need to explore or extend them).
+
+- **Skill authoring (language & layout)**: Prefer English in `SKILL.md` for agent ergonomics; put Japanese user-facing rules in dedicated `*-jp` skills; split long detail into `references/`. See [ADR 0001](docs/adr/0001-skill-authoring-language-and-structure.md).
+- **Git workflow skills**: Keep roles separate—`push` does not open/update PRs (`create-pr-jp` does); use `pull` to sync with the base branch; before push, run `pnpm lint && pnpm test` when those scripts exist. See [ADR 0002](docs/adr/0002-git-workflow-skills-composition.md).

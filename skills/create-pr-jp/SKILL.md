@@ -1,6 +1,6 @@
 ---
 name: create-pr-jp
-description: Create or update a GitHub pull request with a Japanese title and body, using docs/pull_request_template.md when present. Use when the user asks to open a PR, create a pull request, or refresh PR metadata. Requires a pushed branch—use push (and pull if needed) first; use commit-jp for commits.
+description: Create or update a GitHub pull request with a Japanese title and body, using .github/pull_request_template.md or docs/pull_request_template.md when present. Use when the user asks to open a PR, create a pull request, or refresh PR metadata. Requires a pushed branch—use push (and pull if needed) first; use commit-jp for commits.
 metadata:
   author: noblejasper
   version: "1.0.0"
@@ -15,7 +15,7 @@ compatibility:
 
 - Open a new GitHub PR or **update** an existing one for the current branch.
 - Fill **title and body in Japanese** (unless AGENTS.md or the repo specifies otherwise).
-- Align the description with `docs/pull_request_template.md` when that file exists.
+- Align the description with the repo’s PR template: **`.github/pull_request_template.md`** or **`docs/pull_request_template.md`** (see Procedure for lookup order).
 - Run **`pnpm lint && pnpm test`** before submitting the PR (or the repo’s standard checks per AGENTS.md).
 
 ## Prerequisites
@@ -49,7 +49,10 @@ compatibility:
 3. **Push**: Ensure the branch is on `origin` (`git push` / `-u origin HEAD`). If the user only asked to push, defer to **push**; if push fails, fix with **pull** then **push** again.
 4. **Checks**: Run **`pnpm lint && pnpm test`** (or project-documented scripts). If checks fail, do not finalize the PR description as “ready” without fixing or noting the gap per repo policy.
 5. **Review the change**: Use `git diff <base>...HEAD`, `git log <base>..HEAD`, and `git diff <base>...HEAD --stat` to summarize scope (adapt `<base>` to `main` or the default branch).
-6. **Template**: Read `docs/pull_request_template.md` if it exists. Replace placeholders and `<!-- ... -->` comments with concrete content; keep required sections/checklists.
+6. **Template**: Locate a PR body template (use the first path that exists):
+   - **`.github/pull_request_template.md`** (GitHub’s usual location), or
+   - **`docs/pull_request_template.md`**.
+   If **both** exist, prefer **`.github/pull_request_template.md`** unless the repo documents otherwise. Replace placeholders and `<!-- ... -->` comments with concrete content; keep required sections/checklists.
 7. **Create or update**:
    - If no open PR exists for this branch: `gh pr create` with a **Japanese title** and body (from template or file).
    - If an open PR already exists: `gh pr edit` to update title/body so they match the full branch diff.
@@ -74,7 +77,7 @@ git fetch origin
 git diff "origin/${base}...HEAD" --stat
 git log "origin/${base}..HEAD" --oneline
 
-# If docs/pull_request_template.md exists, draft body from it into a temp file, then:
+# If .github/pull_request_template.md or docs/pull_request_template.md exists, draft body from it into a temp file, then:
 gh pr create --base "$base" --title "<日本語タイトル>" --body-file /tmp/pr_body.md
 
 # Or update an existing PR:
@@ -93,6 +96,7 @@ gh pr view --json url -q .url
 
 - **Title and body must be Japanese** unless AGENTS.md (or similar) requires another language.
 - Prefer **`gh pr create` / `gh pr edit` with `--body-file`** for multi-line bodies.
+- Template paths: **`.github/pull_request_template.md`** or **`docs/pull_request_template.md`** (see Procedure if both exist).
 - **Auto-merge** or label/reviewer rules: follow project policy (e.g. only when base is `main`).
 - Do not use **`git push --force`** unless policy allows **`--force-with-lease`** after an intentional history rewrite.
 
@@ -103,5 +107,5 @@ gh pr view --json url -q .url
 | Uncommitted changes | **commit-jp** (or **commit-and-push-jp**) before PR |
 | Branch not on `origin` / push rejected | **push**; if non-fast-forward, **pull** then **push** |
 | `gh` auth errors | Report verbatim; user runs `gh auth login` |
-| Missing `docs/pull_request_template.md` | Still write a clear Japanese body: summary, test plan, risks |
+| No template at `.github/pull_request_template.md` or `docs/pull_request_template.md` | Still write a clear Japanese body: summary, test plan, risks |
 | PR already closed for this branch | New branch from default + cherry-pick or redo work per repo rules |

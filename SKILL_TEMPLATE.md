@@ -1,50 +1,47 @@
 ---
-name: your-skill-name
-description: 1-2文でスキルの説明を記述します。エージェントがいつこのスキルを使うかを明確に記述してください。トリガーフレーズやキーワードを含めると効果的です。
+name: {skill-name}
+description: {One sentence describing when to use this skill. Include trigger phrases like "Deploy my app", "Check logs", etc.}
 ---
 
-# スキルタイトル
+# {Skill Title}
 
-スキルの概要説明をここに記述します。
+{Brief description of what the skill does.}
 
-## 使用するとき
+## When to Use
 
-- "トリガーフレーズ1"
-- "トリガーフレーズ2"
-- どのような状況で使用するかの説明
+- "Trigger phrase 1"
+- "Trigger phrase 2"
+- When and why to use this skill (situations, user intent)
 
 ## How It Works
 
-1. ステップ1の説明
-2. ステップ2の説明
-3. ステップ3の説明
+{Numbered list explaining the skill's workflow}
 
-## 使い方
-
-スクリプトがある場合は使い方を説明します:
+## Usage
 
 ```bash
-bash scripts/your-script.sh [引数]
+bash /mnt/skills/user/{skill-name}/scripts/{script}.sh [args]
 ```
 
-**例:**
+**Arguments:**
+- `arg1` - Description (defaults to X)
 
-```bash
-bash scripts/your-script.sh example
-# 出力: ...
-```
+**Examples:**
+{Show 2-3 common usage patterns}
 
-## 出力フォーマット (任意)
+## Output
 
-スキルの出力形式を記述します:
+{Example output users or the agent will see}
 
-```
-## 結果タイトル
+## Present Results to User
 
-説明
-```
+{How the agent should format or summarize results for the user}
 
-## 注意事項 (任意)
+## Notes (optional)
 
-- 注意点1
-- 注意点2
+- Note 1
+- Note 2
+
+## Troubleshooting
+
+{Common issues and fixes — permissions, paths, network, etc.}

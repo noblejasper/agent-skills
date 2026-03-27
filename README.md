@@ -1,6 +1,6 @@
 # agent-skills
 
-AIコーディングエージェント向けスキルのコレクションです。スキルはエージェントの能力を拡張するためのパッケージ化された指示とスクリプトです。
+AIコーディングエージェント向けスキルのコレクションです。
 
 スキルは [Agent Skills](https://agentskills.io/) フォーマットに従っています。
 
@@ -22,7 +22,7 @@ AIコーディングエージェント向けスキルのコレクションです
 ## インストール
 
 ```bash
-npx skills add noblejasper/agent-skills
+npx skills add https://github.com/noblejasper/agent-skills --skill hello-world
 ```
 
 ## 使い方

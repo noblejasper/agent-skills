@@ -99,6 +99,47 @@ def ensure_gh_auth() -> None:
         raise RuntimeError("GitHub CLI is not authenticated. Run `gh auth login` first.") from exc
 
 
+def parse_pr_number(raw: Any) -> int:
+    """Validate GraphQL `pullRequest.number` before use (avoids bare int() on bad API data)."""
+    if raw is None:
+        raise RuntimeError("Pull request response missing `number`.")
+    if isinstance(raw, bool):
+        raise RuntimeError("Pull request `number` has invalid type (bool).")
+    if isinstance(raw, int):
+        return raw
+    if isinstance(raw, str):
+        try:
+            return int(raw.strip())
+        except ValueError as exc:
+            raise RuntimeError(f"Pull request `number` is not a valid integer: {raw!r}") from exc
+    raise RuntimeError(
+        f"Pull request `number` has unexpected type: {type(raw).__name__} ({raw!r})"
+    )
+
+
+def longest_backtick_run(text: str) -> int:
+    longest = 0
+    i = 0
+    while i < len(text):
+        if text[i] == "`":
+            j = i
+            while j < len(text) and text[j] == "`":
+                j += 1
+            longest = max(longest, j - i)
+            i = j
+        else:
+            i += 1
+    return longest
+
+
+def markdown_fenced_block(text: str, info: str = "text") -> list[str]:
+    """Render `text` as a fenced block without breaking on embedded ``` sequences."""
+    inner = text or "(empty)"
+    fence_len = max(3, longest_backtick_run(inner) + 1)
+    fence = "`" * fence_len
+    return [f"{fence}{info}", inner, fence]
+
+
 def parse_owner_repo_from_pr_url(raw_url: str) -> tuple[str, str]:
     """Extract owner/repo from a PR URL such as https://host/owner/repo/pull/123."""
     parsed = urlparse(raw_url)
@@ -241,7 +282,7 @@ def fetch_threads(max_body_chars: int, pr_number: int | None = None) -> dict[str
             pr_meta = {
                 "owner": owner,
                 "repo": repo,
-                "number": int(pull_request.get("number")),
+                "number": parse_pr_number(pull_request.get("number")),
                 "title": str(pull_request.get("title", "")),
                 "url": str(pull_request.get("url", "")),
                 "state": str(pull_request.get("state", "")),
@@ -328,9 +369,7 @@ def render_markdown(result: dict[str, Any]) -> str:
         if thread["latest_comment_url"]:
             lines.append(f"- Latest comment URL: {thread['latest_comment_url']}")
         lines.append("- Latest comment body:")
-        lines.append("```text")
-        lines.append(thread["latest_comment_body"] or "(empty)")
-        lines.append("```")
+        lines.extend(markdown_fenced_block(thread["latest_comment_body"] or ""))
         lines.append("")
 
     return "\n".join(lines)

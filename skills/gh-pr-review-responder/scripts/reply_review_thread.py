@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -75,10 +77,41 @@ def ensure_gh_auth() -> None:
 
 
 def graphql(query: str, fields: dict[str, str]) -> dict[str, Any]:
-    cmd = ["gh", "api", "graphql", "-F", "query=@-"]
-    for key, value in fields.items():
-        cmd.extend(["-f", f"{key}={value}"])
-    return run_json(cmd, query)
+    """Call GitHub GraphQL via `gh api`. Large `body` values are passed with `-F body=@file` (UTF-8) to avoid argv length limits and shell newline issues."""
+    paths: list[str] = []
+    try:
+        qfile = tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            delete=False,
+            suffix=".graphql",
+        )
+        qfile.write(query)
+        qfile.close()
+        paths.append(qfile.name)
+
+        cmd: list[str] = ["gh", "api", "graphql", "-F", f"query=@{qfile.name}"]
+        for key, value in fields.items():
+            if key == "body":
+                bfile = tempfile.NamedTemporaryFile(
+                    mode="w",
+                    encoding="utf-8",
+                    delete=False,
+                    suffix=".txt",
+                )
+                bfile.write(value)
+                bfile.close()
+                paths.append(bfile.name)
+                cmd.extend(["-F", f"{key}=@{bfile.name}"])
+            else:
+                cmd.extend(["-F", f"{key}={value}"])
+        return run_json(cmd)
+    finally:
+        for path in paths:
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
 
 
 def extract_graphql_data(payload: dict[str, Any]) -> dict[str, Any]:
@@ -106,7 +139,13 @@ def load_body(args: argparse.Namespace) -> str:
     file_path = Path(args.body_file).expanduser().resolve()
     if not file_path.exists():
         raise RuntimeError(f"Body file not found: {file_path}")
-    text = file_path.read_text().strip()
+    try:
+        text = file_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise RuntimeError(
+            f"Body file is not valid UTF-8 (use UTF-8 for Japanese and other Unicode): {file_path}\n{exc}"
+        ) from exc
+    text = text.strip()
     if not text:
         raise RuntimeError("Body file is empty.")
     return text
